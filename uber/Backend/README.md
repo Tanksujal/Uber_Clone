@@ -1,8 +1,10 @@
-# User Registration API
+# User Registration & Login API
 
-## Endpoint: `POST /users/register`
+## 1. User Registration
 
-### Description
+### Endpoint: `POST /users/register`
+
+#### Description
 This endpoint allows a user to register by providing their full name, email, and password. The password is hashed before being stored, and a JWT token is generated upon successful registration.
 
 ### Request Body
@@ -86,4 +88,88 @@ If there is an issue with the server while processing the request.
 - The email must be unique; duplicate registrations with the same email will fail.
 - The generated JWT token can be used for authentication in subsequent requests.
 - The API follows proper validation using `express-validator`.
+
+---
+
+## 2. User Login
+
+### Endpoint: `POST /users/login`
+
+#### Description
+This endpoint allows a registered user to log in using their email and password. Upon successful authentication, a JWT token is generated.
+
+### Request Body
+The request body must contain the following fields:
+
+| Field    | Type   | Required | Validation                  |
+|----------|--------|----------|------------------------------|
+| email    | String | Yes      | Must be a valid email format |
+| password | String | Yes      | Minimum 6 characters         |
+
+### Example Request Body
+```json
+{
+    "email": "john.doe@example.com",
+    "password": "securepassword123"
+}
+```
+
+### Responses
+
+#### Success Response (200 OK)
+If the login is successful, the response includes a JWT token and user data.
+
+```json
+{
+    "token": "<JWT_TOKEN>",
+    "user": {
+        "fullName": {
+            "firstname": "John",
+            "lastname": "Doe"
+        },
+        "email": "john.doe@example.com",
+        "_id": "6123abcd4567efgh8901ijkl"
+    }
+}
+```
+
+#### Error Responses
+
+##### 400 Bad Request (Validation Error)
+If the email or password does not meet validation criteria.
+
+```json
+{
+    "errors": [
+        {
+            "msg": "Invalid Email",
+            "param": "email",
+            "location": "body"
+        }
+    ]
+}
+```
+
+##### 401 Unauthorized (Invalid Credentials)
+If the email does not exist or the password is incorrect.
+
+```json
+{
+    "error": "Invalid Email Or Password"
+}
+```
+
+##### 500 Internal Server Error
+If there is an issue with the server while processing the request.
+
+```json
+{
+    "error": "Internal server error"
+}
+```
+
+### Notes
+- The password is securely hashed and compared using bcrypt.
+- The API follows proper validation using `express-validator`.
+- The JWT token can be used for authentication in subsequent requests.
 
