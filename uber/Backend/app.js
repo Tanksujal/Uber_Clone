@@ -11,4 +11,5 @@ app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
 app.use(cors())
 app.use('/users',require('./routes/user.routes'))
+app.use('/captains',require('./routes/captain.routes'))
 module.exports = app

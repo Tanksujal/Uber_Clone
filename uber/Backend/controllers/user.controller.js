@@ -8,7 +8,11 @@ module.exports.registerUser = async(req,res) => {
     if(!errors.isEmpty()){
         return res.status(400).json({errors: errors.array() })
     }
-    const {fullname,lastname,email,password} = req.body;
+    const {fullname,email,password} = req.body;
+    const existUser = await Usermodel.findOne({email:email})
+    if(existUser){
+        return res.status(400).json({message:"Email already exist"})
+    }
     const hashedpassword = await Usermodel.hashPassword(password);
     const user = await userService.createUser({
         firstname:fullname.firstname,lastname:fullname.lastname,email,password:hashedpassword
